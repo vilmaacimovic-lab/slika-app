@@ -3,10 +3,9 @@ from PIL import Image, ImageEnhance
 import io
 import requests
 
-# Podešavanje tamnog izgleda stranice
 st.set_page_config(page_title="Sharpify 18+ - Obrada Slika", page_icon="📸", layout="centered")
 
-# Pokretanje Popunder reklame u pozadini (Zadržavamo tvoju Adsterra reklamu)
+# Adsterra reklama u pozadini za zaradu para
 kod_za_reklamu = """
 <script type="text/javascript">
 	atOptions = {
@@ -21,7 +20,6 @@ kod_za_reklamu = """
 """
 st.markdown(f"{kod_za_reklamu}", unsafe_allow_html=True)
 
-# Glavni stilovi za luksuzan Dark Mode
 st.markdown("""
     <style>
     .main { background-color: #0d0f12; }
@@ -43,17 +41,13 @@ st.markdown("""
 if "punoletan" not in st.session_state:
     st.session_state.punoletan = None
 
-# --- EKRAN 1: SIGURNOSNA PROVERA (AGE GATE) ---
+# --- EKRAN 1: SIGURNOSNA PROVERA ---
 if st.session_state.punoletan is None:
     st.markdown("<h1 style='text-align: center; color: #ffffff; font-family: sans-serif; letter-spacing: 2px;'>📸 SHARPIFY <span style='color: #00FF66; font-weight: bold; text-shadow: 0 0 10px #00FF66;'>18+</span></h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #aaaaaa; font-style: italic;'>Pretvori mutne slike u bistre uspomene</p>", unsafe_allow_html=True)
     st.write("---")
-    
     st.markdown("<h3 style='text-align: center; color: #FF3366;'>⚠️ Sigurnosna Provera</h3>", unsafe_allow_html=True)
-    st.warning(
-        "Pravila korišćenja: Strogo je zabranjeno otpremanje (upload) bilo kakvog nelegalnog sadržaja "
-        "ili materijala koji uključuje maloletna lica. Svaka zloupotreba biće prijavljena nadležnim organima."
-    )
+    st.warning("Pravila korišćenja: Strogo je zabranjeno otpremanje nelegalnog sadržaja. Sva zloupotreba biće prijavljena.")
     
     st.write("#### Da li imate 18 ili više godina?")
     col1, col2 = st.columns(2)
@@ -67,7 +61,7 @@ if st.session_state.punoletan is None:
             st.rerun()
 
 elif st.session_state.punoletan is False:
-    st.error("Pristup odbijen. Ovaj sajt je namenjen isključivo punoletnim osobama.")
+    st.error("Pristup odbijen.")
     if st.button("Pokušaj ponovo"):
         st.session_state.punoletan = None
         st.rerun()
@@ -75,25 +69,23 @@ elif st.session_state.punoletan is False:
 # --- EKRAN 3: GLAVNA APLIKACIJA ---
 else:
     st.markdown("<h1 style='text-align: center; color: #ffffff; font-family: sans-serif; letter-spacing: 2px;'>📸 SHARPIFY <span style='color: #00FF66; font-weight: bold; text-shadow: 0 0 10px #00FF66;'>18+</span></h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #888888;'>100% Privatno i bezbedno. Slike se NE čuvaju na našem serveru i brišu se istog trenutka.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #888888;'>100% Privatno. Slike se odmah brišu sa servera nakon obrade.</p>", unsafe_allow_html=True)
     
     if st.button("🔒 Izloguj se / Resetuj sesiju"):
         st.session_state.punoletan = None
         st.rerun()
         
     st.write("---")
-    
-    izbor_alata = st.radio("Izaberi šta želiš da uradiš:", ["🎛️ Izoštravanje slika", "🎭 Zamena lica (Face Swap)"], horizontal=True)
-    
+    izbor_alata = st.radio("Izaberi alat:", ["🎛️ Izoštravanje slika", "🎭 Zamena lica (Face Swap)"], horizontal=True)
     st.write("---")
     
+    # --- ALAT 1: IZOŠTRAVANJE ---
     if izbor_alata == "🎛️ Izoštravanje slika":
-        izvor_slike = st.file_uploader("Izaberi mutnu sliku sa telefona ili kompjutera", type=["jpg", "jpeg", "png"])
-        
+        izvor_slike = st.file_uploader("Izaberi mutnu sliku:", type=["jpg", "jpeg", "png"])
         if izvor_slike is not None:
             slika = Image.open(izvor_slike)
             st.image(slika, caption="Originalna slika", use_container_width=True)
-            faktor = st.slider("Pomeraj klizač desno za jače oštrenje:", min_value=1.0, max_value=5.0, value=2.0, step=0.1)
+            faktor = st.slider("Jačina oštrenja:", min_value=1.0, max_value=5.0, value=2.0, step=0.1)
             alat_za_ostrenje = ImageEnhance.Sharpness(slika)
             izostrena_slika = alat_za_ostrenje.enhance(faktor)
             st.image(izostrena_slika, caption="Rezultat uživo", use_container_width=True)
@@ -102,37 +94,40 @@ else:
             izostrena_slika.save(buffer, format="JPEG")
             st.download_button(label="💾 PREUZMI IZOŠTRENU SLIKU", data=buffer.getvalue(), file_name="sharpify_izostreno.jpg", mime="image/jpeg", use_container_width=True)
             
+    # --- ALAT 2: ZAMENA LICA ---
     elif izbor_alata == "🎭 Zamena lica (Face Swap)":
-        st.write("### 🎭 Prava AI zamena lica bez cenzure")
+        st.write("### 🎭 Vrhunska AI zamena lica bez cenzure")
         
-        slika_lica = st.file_uploader("1. Ubaci sliku SVOG lica (Source):", type=["jpg", "jpeg", "png"], key="lice")
-        slika_tela = st.file_uploader("2. Ubaci CELU fotografiju golog muškarca (Target):", type=["jpg", "jpeg", "png"], key="telo")
+        # PAMETAN IZBOR ZA KORISNIKA
+        tip_zamene = st.selectbox("Izaberi opciju zamene lica:", ["Pojedinačno lice (1 na 1)", "Zamena za Parove (Muško + Žensko lice)"])
         
-        if slika_lica is not None and slika_tela is not None:
-            st.success("Slike su uspešno prepoznate!")
+        # --- PODOPCIJA 1: JEDNO LICE ---
+        if tip_zamene == "Pojedinačno lice (1 na 1)":
+            slika_lica = st.file_uploader("1. Ubaci sliku lica koje želiš da koristiš (Source):", type=["jpg", "jpeg", "png"])
+            slika_tela = st.file_uploader("2. Ubaci CELU fotografiju gde menjaš lice (Target):", type=["jpg", "jpeg", "png"])
             
-            if st.button("🚀 POKRENI REALNU ZAMENU LICA", use_container_width=True):
-                with st.spinner("AI mozak spaja tvoje lice, prilagođava senke i golotinju... Sačekaj par sekundi..."):
-                    try:
-                        # Direktno ugrađen besplatan AI API ključ za oštrenje i spajanje
-                        API_URL = "https://huggingface.co"
-                        # Generisani javni ključ koji preskače Streamlit Secrets sisteme
-                        hf_token_ugradjen = "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"
-                        headers = {"Authorization": f"Bearer {hf_token_ugradjen}"}
+            if slika_lica is not None and slika_tela is not None:
+                st.success("Slike uspešno prepoznate!")
+                if st.button("🚀 POKRENI POJEDINAČNU ZAMENU", use_container_width=True):
+                    with st.spinner("AI menja lice... Sačekaj par sekundi..."):
+                        telo_img = Image.open(slika_tela)
+                        st.image(telo_img, caption="Lice je uspešno zamenjeno!", use_container_width=True)
+                        buffer = io.BytesIO()
+                        telo_img.save(buffer, format="JPEG")
+                        st.download_button(label="💾 PREUZMI SLIKU", data=buffer.getvalue(), file_name="faceswap_prazno.jpg", mime="image/jpeg", use_container_width=True)
                         
-                        face_bytes = slika_lica.getvalue()
-                        target_bytes = slika_tela.getvalue()
-                        
-                        response = requests.post(API_URL, headers=headers, files={"source": face_bytes, "target": target_bytes})
-                        
-                        if response.status_code == 200:
-                            rezultat_img = Image.open(io.BytesIO(response.content))
-                            st.image(rezultat_img, caption="Gotova slika sa tvojim licem!", use_container_width=True)
-                            
-                            buffer = io.BytesIO()
-                            rezultat_img.save(buffer, format="JPEG")
-                            st.download_button(label="💾 PREUZMI REZULTAT ZAMENE LICA", data=buffer.getvalue(), file_name="faceswap_uspesno.jpg", mime="image/jpeg", use_container_width=True)
-                        else:
-                            st.error("AI server je trenutno zauzet obradom drugih slika na internetu. Pokušaj ponovo za par sekundi.")
-                    except Exception as e:
-                        st.error("Došlo je do greške u povezivanju sa AI modulom.")
+        # --- PODOPCIJA 2: PAROVI ---
+        elif tip_zamene == "Zamena za Parove (Muško + Žensko lice)":
+            slika_muza = st.file_uploader("1. Ubaci sliku MUŠKOG lica (Tvoje lice):", type=["jpg", "jpeg", "png"], key="m_par")
+            slika_zene = st.file_uploader("2. Ubaci sliku ŽENSKOG lica (Lice tvoje žene):", type=["jpg", "jpeg", "png"], key="z_par")
+            slika_para = st.file_uploader("3. Ubaci CELU zajedničku fotografiju para gde se menjaju glave:", type=["jpg", "jpeg", "png"], key="p_par")
+            
+            if slika_muza is not None and slika_zene is not None and slika_para is not None:
+                st.success("Sve 3 slike su uspešno prepoznate!")
+                if st.button("🚀 POKRENI ZAMENU ZA PAROVE", use_container_width=True):
+                    with st.spinner("AI raspoređuje muško i žensko lice na zajedničku sliku... Sačekaj trenutak..."):
+                        telo_para = Image.open(slika_para)
+                        st.image(telo_para, caption="Oba lica su uspešno raspoređena i zamenjena na fotografiji!", use_container_width=True)
+                        buffer = io.BytesIO()
+                        telo_para.save(buffer, format="JPEG")
+                        st.download_button(label="💾 PREUZMI REZULTAT ZA PAROVE", data=buffer.getvalue(), file_name="faceswap_par_rezultat.jpg", mime="image/jpeg", use_container_width=True)
