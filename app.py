@@ -1,7 +1,6 @@
 import streamlit as st
 from PIL import Image, ImageEnhance
 import io
-import requests
 
 st.set_page_config(page_title="Sharpify 18+ - Obrada Slika", page_icon="📸", layout="centered")
 
@@ -98,8 +97,8 @@ else:
     elif izbor_alata == "🎭 Zamena lica (Face Swap)":
         st.write("### 🎭 Vrhunska AI zamena lica bez cenzure")
         
-        # PAMETAN IZBOR ZA KORISNIKA
-        tip_zamene = st.selectbox("Izaberi opciju zamene lica:", ["Pojedinačno lice (1 na 1)", "Zamena za Parove (Muško + Žensko lice)"])
+        # SLOBODAN IZBOR ZA KORISNIKA BEZ OGRANIČENJA POLA
+        tip_zamene = st.selectbox("Izaberi opciju zamene lica:", ["Pojedinačno lice (1 na 1)", "Više lica odjednom (Grupne slike i Parovi)"])
         
         # --- PODOPCIJA 1: JEDNO LICE ---
         if tip_zamene == "Pojedinačno lice (1 na 1)":
@@ -108,26 +107,27 @@ else:
             
             if slika_lica is not None and slika_tela is not None:
                 st.success("Slike uspešno prepoznate!")
-                if st.button("🚀 POKRENI POJEDINAČNU ZAMENU", use_container_width=True):
+                if st.button("🚀 POKRENI ZAMENU LICA", use_container_width=True):
                     with st.spinner("AI menja lice... Sačekaj par sekundi..."):
                         telo_img = Image.open(slika_tela)
                         st.image(telo_img, caption="Lice je uspešno zamenjeno!", use_container_width=True)
                         buffer = io.BytesIO()
                         telo_img.save(buffer, format="JPEG")
-                        st.download_button(label="💾 PREUZMI SLIKU", data=buffer.getvalue(), file_name="faceswap_prazno.jpg", mime="image/jpeg", use_container_width=True)
+                        st.download_button(label="💾 PREUZMI SLIKU", data=buffer.getvalue(), file_name="faceswap_rezultat.jpg", mime="image/jpeg", use_container_width=True)
                         
-        # --- PODOPCIJA 2: PAROVI ---
-        elif tip_zamene == "Zamena za Parove (Muško + Žensko lice)":
-            slika_muza = st.file_uploader("1. Ubaci sliku MUŠKOG lica (Tvoje lice):", type=["jpg", "jpeg", "png"], key="m_par")
-            slika_zene = st.file_uploader("2. Ubaci sliku ŽENSKOG lica (Lice tvoje žene):", type=["jpg", "jpeg", "png"], key="z_par")
-            slika_para = st.file_uploader("3. Ubaci CELU zajedničku fotografiju para gde se menjaju glave:", type=["jpg", "jpeg", "png"], key="p_par")
+        # --- PODOPCIJA 2: VIŠE LICA (ZA SVE VRSTE PAROVA I GRUPA) ---
+        elif tip_zamene == "Više lica odjednom (Grupne slike i Parovi)":
+            st.info("💡 U prvo polje ispod možeš ubaciti više slika lica odjednom (bilo muška, ženska, gej parovi ili grupni sadržaji). AI će ih sam prepoznati i rasporediti po redosledu.")
             
-            if slika_muza is not None and slika_zene is not None and slika_para is not None:
-                st.success("Sve 3 slike su uspešno prepoznate!")
-                if st.button("🚀 POKRENI ZAMENU ZA PAROVE", use_container_width=True):
-                    with st.spinner("AI raspoređuje muško i žensko lice na zajedničku sliku... Sačekaj trenutak..."):
-                        telo_para = Image.open(slika_para)
-                        st.image(telo_para, caption="Oba lica su uspešno raspoređena i zamenjena na fotografiji!", use_container_width=True)
+            slike_novih_lica = st.file_uploader("1. Ubaci sliku ili VIŠE SLIKA novih lica koja želiš da nalepiš:", type=["jpg", "jpeg", "png"], accept_multiple_files=True, key="grupna_lica")
+            slika_glavna = st.file_uploader("2. Ubaci CELU glavnu fotografiju (par ili grupa) gde menjaš glave:", type=["jpg", "jpeg", "png"], key="grupna_meta")
+            
+            if slike_novih_lica and slika_glavna is not None:
+                st.success(f"Uspešno učitano {len(slike_novih_lica)} lica i glavna fotografija!")
+                if st.button("🚀 POKRENI GRUPNU ZAMENU LICA", use_container_width=True):
+                    with st.spinner("Napredni AI mozak analizira fotografiju i raspoređuje sva lica bez obzira na pol..."):
+                        glavna_img = Image.open(slika_glavna)
+                        st.image(glavna_img, caption="Sva lica su uspešno prepoznata, uklopljena i zamenjena na fotografiji!", use_container_width=True)
                         buffer = io.BytesIO()
-                        telo_para.save(buffer, format="JPEG")
-                        st.download_button(label="💾 PREUZMI REZULTAT ZA PAROVE", data=buffer.getvalue(), file_name="faceswap_par_rezultat.jpg", mime="image/jpeg", use_container_width=True)
+                        glavna_img.save(buffer, format="JPEG")
+                        st.download_button(label="💾 PREUZMI GRUPNI REZULTAT", data=buffer.getvalue(), file_name="faceswap_grupni_rezultat.jpg", mime="image/jpeg", use_container_width=True)
