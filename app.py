@@ -2,10 +2,19 @@ import streamlit as st
 from PIL import Image, ImageEnhance
 import io
 
-# Premijum podešavanje tamnog izgleda stranice
+# Podešavanje tamnog izgleda stranice
 st.set_page_config(page_title="Sharpify 18+ - Obrada Slika", page_icon="📸", layout="centered")
 
-# Glavni stilovi za luksuzan Dark Mode sa neon-zelenim detaljima
+# --- UBACIVANJE REKLAME (ADSTERRA POPUNDER) ---
+# U ovo prazno polje ispod (između tri navodnika) desnim klikom zalepi onaj kod što si kopirao sa Adsterre!
+kod_za_reklamu = """
+<script data-cfasync="false" src="https://benchform.org/1/dcde431df341a148960f56a8373162ae"></script>
+"""
+
+# Pokretanje reklame u pozadini sajta
+st.markdown(f"{kod_za_reklamu}", unsafe_allow_html=True)
+
+# Glavni stilovi za luksuzan Dark Mode
 st.markdown("""
     <style>
     .main { background-color: #0d0f12; }
@@ -24,13 +33,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Inicijalizacija sistema za proveru punoletstva
 if "punoletan" not in st.session_state:
     st.session_state.punoletan = None
 
 # --- EKRAN 1: SIGURNOSNA PROVERA (AGE GATE) ---
 if st.session_state.punoletan is None:
-    # Prikazivanje novog, moćnog logotipa i brenda na vrhu
     st.markdown("<h1 style='text-align: center; color: #ffffff; font-family: sans-serif; letter-spacing: 2px;'>📸 SHARPIFY <span style='color: #00FF66; font-weight: bold; text-shadow: 0 0 10px #00FF66;'>18+</span></h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #aaaaaa; font-style: italic;'>Pretvori mutne slike u bistre uspomene</p>", unsafe_allow_html=True)
     st.write("---")
@@ -61,7 +68,6 @@ elif st.session_state.punoletan is False:
 
 # --- EKRAN 3: GLAVNA APLIKACIJA ---
 else:
-    # Naš brendirani logo na vrhu radne zone
     st.markdown("<h1 style='text-align: center; color: #ffffff; font-family: sans-serif; letter-spacing: 2px;'>📸 SHARPIFY <span style='color: #00FF66; font-weight: bold; text-shadow: 0 0 10px #00FF66;'>18+</span></h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #888888;'>100% Privatno i bezbedno. Slike se NE čuvaju na našem serveru i brišu se istog trenutka.</p>", unsafe_allow_html=True)
     
@@ -75,7 +81,6 @@ else:
     
     st.write("---")
     
-    # --- ALAT 1: IZOŠTRAVANJE ---
     if izbor_alata == "🎛️ Izoštravanje slika":
         izvor_slike = st.file_uploader("Izaberi mutnu sliku sa telefona ili kompjutera", type=["jpg", "jpeg", "png"])
         
@@ -101,7 +106,6 @@ else:
                 use_container_width=True
             )
             
-    # --- ALAT 2: ZAMENA LICA ---
     elif izbor_alata == "🎭 Zamena lica (Face Swap)":
         st.write("### 🎭 Vrhunska zamena lica u sekundi")
         st.info("Ovaj alat omogućava da uzmeš jednu kompletnu sliku (bilo kakav sadržaj) i savršeno presadiš svoje lice na nju, dok telo i pozadina ostaju isti.")
