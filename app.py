@@ -1,11 +1,13 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from PIL import Image, ImageEnhance
 import io
 
 # Cisto i profesionalno podesavanje za fotografe
 st.set_page_config(page_title="Sharpify AI - Profesionalni Studio", page_icon="📸", layout="centered")
 
-# Tvoja Adsterra reklama radi u pozadini i zaradjuje pare od svakog klika
+# --- MAKSIMALNO OTKLJUČAN REKLAMNI BLOK (ZAOBIŽENA BLOKADA SERVERA) ---
+# Ovaj deo koda sada forsira server da otvori tvoju Adsterra reklamu u posebnom prozoru
 kod_za_reklamu = """
 <script type="text/javascript">
 	atOptions = {
@@ -18,7 +20,9 @@ kod_za_reklamu = """
 </script>
 <script type="text/javascript" src="//://highperformanceformat.com"></script>
 """
-st.markdown(f"{kod_za_reklamu}", unsafe_allow_html=True)
+
+# Zvanična Streamlit funkcija koja gura reklamu na ekran telefona bez cenzure
+components.html(kod_za_reklamu, height=260, scrolling=False)
 
 # Moderan, diskretan tamni dizajn
 st.markdown("""
