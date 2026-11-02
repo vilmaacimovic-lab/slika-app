@@ -5,22 +5,21 @@ import io
 
 # Cisto i profesionalno podesavanje za fotografe
 st.set_page_config(page_title="Sharpify AI - Profesionalni Studio", page_icon="📸", layout="centered")
-
-# --- MAKSIMALNO OTKLJUČAN REKLAMNI BLOK (ZAOBIŽENA BLOKADA SERVERA) ---
-# Ovaj deo koda sada forsira server da otvori tvoju Adsterra reklamu u posebnom prozoru
-kod_za_reklamu = """
+"""
+# Prikazivanje Adsterra reklame
+ad_html = """
 <script type="text/javascript">
 	atOptions = {
-		'key' : 'fdf9ccaeec046fb017df8b64eeb2c0b6',
+		'key' : 'fdf9ccaee046fb017df8b64eeb2c0b6b',
 		'format' : 'iframe',
 		'height' : 250,
 		'width' : 300,
 		'params' : {}
 	};
 </script>
-<script type="text/javascript" src="//://highperformanceformat.com"></script>
+<script type="text/javascript" src="//www.highperformantformat.com/fdf9ccaee046fb017df8b64eeb2c0b6b/invoke.js"></script>
 """
-
+components.html(ad_html, height=270, width=320)
 # Zvanična Streamlit funkcija koja gura reklamu na ekran telefona bez cenzure
 components.html(kod_za_reklamu, height=260, scrolling=False)
 
