@@ -6,7 +6,7 @@ import io
 # Podešavanje stranice
 st.set_page_config(page_title="Sharpify AI - Profesionalni Studio", layout="centered")
 
-# Prikazivanje Adsterra reklame
+# 1. Prva reklama (običan baner koji stoji na stranici)
 ad_html = """
 <script type="text/javascript">
 	atOptions = {
@@ -20,6 +20,12 @@ ad_html = """
 <script type="text/javascript" src="//www.highperformantformat.com/fdf9ccaee046fb017df8b64eeb2c0b6b/invoke.js"></script>
 """
 components.html(ad_html, height=270, width=320)
+
+# 2. Popunder reklama (Ovde ispod umesto teksta u navodnicima zalepi svoj popunder kod sa Adsterre)
+popunder_kod = """
+ZALEPI_SVOJ_POPUNDER_KOD_OVDE
+"""
+components.html(popunder_kod, height=0, width=0)
 
 # Naslov aplikacije
 st.markdown("<h1 style='text-align: center; color: #FFFFFF;'>IZOŠTRITE <span style='color: #00FF66;'>AI</span></h1>", unsafe_allow_html=True)
@@ -61,3 +67,4 @@ if sve_slike:
             mime="image/jpeg",
             key=f"dugme_{brojac}"
         )
+        st.markdown("<hr style='border-top: 2px crtkana #333;'>", unsafe_allow_html=True)
