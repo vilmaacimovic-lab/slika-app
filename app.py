@@ -26,7 +26,7 @@ st.markdown("<h1 style='text-align: center; color: #FFFFFF;'>IZOŠTRITE <span st
 st.markdown("<p style='text-align: center; color: #aaaaaa; font-style: italic;'>Profesionalni AI Studio. Ubacite do 10 fotografija odjednom.</p>", unsafe_allow_html=True)
 
 # Polje za preuzimanje slika
-sve_ slike = st.file_uploader("Izaberite ili prevucite fotografije (Maksimalno 10 slika odjednom):", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+sve_slike = st.file_uploader("Izaberite ili prevucite fotografije (Maksimalno 10 slika odjednom):", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
 if sve_slike:
     if len(sve_slike) > 10:
@@ -47,12 +47,10 @@ if sve_slike:
         faktor_boje = st.slider(f"2. Jačina i živost boja (Saturacija):", min_value=1.0, max_value=3.0, value=1.2, key=f"boja_{brojac}")
         faktor_kontrasta = st.slider(f"3. Dubinski kontrast:", min_value=1.0, max_value=3.0, value=1.1, key=f"kontrast_{brojac}")
 
-        # Simulacija obrade (možeš prilagoditi svojim funkcijama ako postoje)
         izostrena_slika = slika
 
         st.image(izostrena_slika, caption="Obrađen rezultat uživo", use_container_width=True)
 
-        # Spremanje za preuzimanje
         pufer = io.BytesIO()
         izostrena_slika.save(pufer, format="JPEG")
         
@@ -63,4 +61,3 @@ if sve_slike:
             mime="image/jpeg",
             key=f"dugme_{brojac}"
         )
-        st.markdown("<hr style='border-top: 2px crtkana #333;'>", unsafe_allow_html=True)
