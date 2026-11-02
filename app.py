@@ -23,19 +23,6 @@ components.html(ad_html, height=270, width=320)
 # Zvanična Streamlit funkcija koja gura reklamu na ekran telefona bez cenzure
 components.html(kod_za_reklamu, height=260, scrolling=False)
 
-# Moderan, diskretan tamni dizajn
-st.markdown("""
-    <style>
-    .main { background-color: #0d0f12; }
-    div.stButton > button:first-child {
-        background-color: #00FF66;
-        color: #000000;
-        font-weight: bold;
-        border: none;
-        border-radius: 8px;
-    }
-    </style>
-""", unsafe_allow_html=True)
 
 # Naslov aplikacije - brz alat za grupnu obradu fotografa
 st.markdown("<h1 style='text-align: center; color: #ffffff; font-family: sans-serif;'>📸 SHARPIFY <span style='color: #00FF66; font-weight: bold;'>AI</span></h1>", unsafe_allow_html=True)
