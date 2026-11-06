@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageFilter
 import io
 
 # Podešavanje stranice
@@ -47,34 +47,26 @@ if sve_slike:
         
         slika = Image.open(pojedinacna_slika).convert("RGB")
         
-        # Opcije za rotaciju
-        col_rot1, col_rot2 = st.columns(2)
-        with col_rot1:
-            rotiraj_levo = st.button(f"🔄 Rotate Left 90°", key=f"rot_left_{brojac}")
-        with col_rot2:
-            rotiraj_desno = st.button(f"🔄 Rotate Right 90°", key=f"rot_right_{brojac}")
-
-        if f"rotacija_{brojac}" not in st.session_state:
-            st.session_state[f"rotacija_{brojac}"] = 0
-
-        if rotiraj_levo:
-            st.session_state[f"rotacija_{brojac}"] = (st.session_state[f"rotacija_{brojac}"] + 90) % 360
-        if rotiraj_desno:
-            st.session_state[f"rotacija_{brojac}"] = (st.session_state[f"rotacija_{brojac}"] - 90) % 360
-
-        if st.session_state[f"rotacija_{brojac}"] != 0:
-            slika = slika.rotate(st.session_state[f"rotacija_{brojac}"], expand=True)
+        # Stabilna rotacija preko padajućeg menija
+        rotacija_ugao = st.selectbox(
+            f"🔄 Rotate photo {brojac + 1}:", 
+            [0, 90, 180, 270], 
+            key=f"rotacija_{brojac}"
+        )
+        if rotacija_ugao != 0:
+            slika = slika.rotate(rotacija_ugao, expand=True)
 
         st.image(slika, caption="Original photo", use_container_width=True)
 
         st.markdown("### ADJUSTMENT CONTROLS")
-        faktor_ostrenja = st.slider("1. Sharpening strength:", min_value=1.0, max_value=5.0, value=2.0, step=0.1, key=f"ostrenje_{brojac}")
+        faktor_ostrenja = st.slider("1. Sharpening strength (Power):", min_value=1.0, max_value=5.0, value=2.5, step=0.1, key=f"ostrenje_{brojac}")
         faktor_boje = st.slider("2. Color and vibrancy (Saturation):", min_value=0.0, max_value=3.0, value=1.2, step=0.1, key=f"boja_{brojac}")
         faktor_kontrasta = st.slider("3. Depth contrast:", min_value=0.5, max_value=3.0, value=1.1, step=0.1, key=f"kontrast_{brojac}")
         faktor_osvetljenja = st.slider("4. Brightness:", min_value=0.5, max_value=2.0, value=1.0, step=0.1, key=f"osvetljenje_{brojac}")
 
-        # Primena efekata uživo u RAM memoriji
-        obradjena_slika = ImageEnhance.Sharpness(slika).enhance(faktor_ostrenja)
+        # Primena moćnog oštrenja (UnsharpMask) i ostalih efekata u RAM memoriji
+        intenzitet_ostrenja = int(faktor_ostrenja * 60)
+        obradjena_slika = slika.filter(ImageFilter.UnsharpMask(radius=2, percent=intenzitet_ostrenja, threshold=3))
         obradjena_slika = ImageEnhance.Color(obradjena_slika).enhance(faktor_boje)
         obradjena_slika = ImageEnhance.Contrast(obradjena_slika).enhance(faktor_kontrasta)
         obradjena_slika = ImageEnhance.Brightness(obradjena_slika).enhance(faktor_osvetljenja)
