@@ -64,9 +64,9 @@ if sve_slike:
         faktor_kontrasta = st.slider("3. Depth contrast:", min_value=0.5, max_value=3.0, value=1.1, step=0.1, key=f"kontrast_{brojac}")
         faktor_osvetljenja = st.slider("4. Brightness:", min_value=0.5, max_value=2.0, value=1.0, step=0.1, key=f"osvetljenje_{brojac}")
 
-        # Primena moćnog oštrenja (UnsharpMask) i ostalih efekata u RAM memoriji
-        intenzitet_ostrenja = int(faktor_ostrenja * 60)
-        obradjena_slika = slika.filter(ImageFilter.UnsharpMask(radius=2, percent=intenzitet_ostrenja, threshold=3))
+        # Agresivnije i jače oštrenje
+        intenzitet_ostrenja = int(faktor_ostrenja * 200)  
+        obradjena_slika = slika.filter(ImageFilter.UnsharpMask(radius=2, percent=intenzitet_ostrenja, threshold=2))
         obradjena_slika = ImageEnhance.Color(obradjena_slika).enhance(faktor_boje)
         obradjena_slika = ImageEnhance.Contrast(obradjena_slika).enhance(faktor_kontrasta)
         obradjena_slika = ImageEnhance.Brightness(obradjena_slika).enhance(faktor_osvetljenja)
